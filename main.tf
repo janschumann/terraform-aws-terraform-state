@@ -41,7 +41,7 @@ resource "aws_kms_alias" "state" {
 }
 
 resource "aws_dynamodb_table" "state" {
-  name           = var.lock_table_name
+  name = var.lock_table_name
 
   read_capacity  = 5
   write_capacity = 5
