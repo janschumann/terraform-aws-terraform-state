@@ -27,11 +27,11 @@ locals {
   }
   kms_key_policy_statements = [
     {
-      statement = local.manage_kms_key_statement
+      statement  = local.manage_kms_key_statement
       principals = local.manager_principals
     },
     {
-      statement = local.use_kms_key_statement
+      statement  = local.use_kms_key_statement
       principals = local.reader_principals
     }
   ]
@@ -79,19 +79,13 @@ locals {
     ]
     resources = local.bucket_resources
   }
-  list_bucket_statement = {
-    actions = [
-      "s3:ListBucket"
-    ]
-    effect    = "Allow"
-    resources = local.bucket_folder_resources
-  }
   read_bucket_objects_statement = {
     actions = [
+      "s3:ListBucket",
       "s3:GetObject"
     ]
     effect    = "Allow"
-    resources = local.bucket_object_resources
+    resources = local.bucket_resources
   }
   write_bucket_objects_statement = {
     actions = [
@@ -103,19 +97,15 @@ locals {
   }
   bucket_policy_statements = [
     {
-      statement = local.manage_bucket_statement
+      statement  = local.manage_bucket_statement
       principals = local.manager_principals
     },
     {
-      statement = local.list_bucket_statement
+      statement  = local.read_bucket_objects_statement
       principals = local.reader_principals
     },
     {
-      statement = local.read_bucket_objects_statement
-      principals = local.reader_principals
-    },
-    {
-      statement = local.write_bucket_objects_statement
+      statement  = local.write_bucket_objects_statement
       principals = local.writer_principals
     }
   ]
@@ -129,7 +119,6 @@ locals {
   ]
   state_reader_policy_statements = [
     local.read_lock_table_statement,
-    local.list_bucket_statement,
     local.read_bucket_objects_statement,
     merge(local.use_kms_key_statement, {
       resources = local.kms_key_resources
