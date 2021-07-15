@@ -68,16 +68,17 @@ locals {
     resources = local.lock_table_resources
   }
 
-  bucket_name             = format("%s-terraform-state", var.bucket_name)
-  bucket_folder_resources = formatlist("arn:aws:s3:::%s", [var.bucket_name])
-  bucket_object_resources = formatlist("arn:aws:s3:::%s/*", [var.bucket_name])
-  bucket_resources        = concat(local.bucket_folder_resources, local.bucket_object_resources)
+  bucket_name                    = format("%s-terraform-state", var.bucket_name)
+  bucket_folder_resources        = formatlist("arn:aws:s3:::%s", [var.bucket_name])
+  bucket_object_resources        = formatlist("arn:aws:s3:::%s/*", [var.bucket_name])
+  bucket_object_resources_writer = formatlist("arn:aws:s3:::%s/env:/%s/*", [var.bucket_name], terraform.workspace)
+  all_bucket_resources           = concat(local.bucket_folder_resources, local.bucket_object_resources)
   manage_bucket_statement = {
     effect = "Allow"
     actions = [
       "s3:*"
     ]
-    resources = local.bucket_resources
+    resources = local.all_bucket_resources
   }
   read_bucket_objects_statement = {
     actions = [
@@ -85,7 +86,7 @@ locals {
       "s3:GetObject"
     ]
     effect    = "Allow"
-    resources = local.bucket_resources
+    resources = local.all_bucket_resources
   }
   write_bucket_objects_statement = {
     actions = [
@@ -93,7 +94,7 @@ locals {
       "s3:DeleteObject"
     ]
     effect    = "Allow"
-    resources = local.bucket_object_resources
+    resources = local.bucket_object_resources_writer
   }
   bucket_policy_statements = [
     {
