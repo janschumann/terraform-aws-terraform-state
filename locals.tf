@@ -1,7 +1,7 @@
 locals {
   is_associated_account = length(var.associated_accounts) == 0 || setintersection([data.aws_caller_identity.current.account_id], keys(var.associated_accounts)) == [data.aws_caller_identity.current.account_id]
 
-  reader_principals  = distinct(concat(var.reader_principals, var.writer_principals))
+  reader_principals  = distinct(var.reader_principals)
   writer_principals  = distinct(var.writer_principals)
   manager_principals = distinct(var.manager_principals)
 
