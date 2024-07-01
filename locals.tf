@@ -32,7 +32,7 @@ locals {
     },
     {
       statement  = local.use_kms_key_statement
-      principals = local.reader_principals
+      principals = distinct(var.reader_principals, var.writer_principals)
     }
   ]
 
