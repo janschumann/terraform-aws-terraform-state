@@ -97,7 +97,7 @@ locals {
       "s3:DeleteObject"
     ]
     effect    = "Allow"
-    resources = local.bucket_object_resources
+    resources = local.all_bucket_resources
   }
   bucket_policy_statements = [
     {
